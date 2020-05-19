@@ -198,7 +198,7 @@ namespace velodyne_rawdata {
 
         void unpack_hdl64(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
 
-        void unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc, Cloud &pc_pcl);
+        void unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, Cloud &pc_pcl);
 
         void compute_xyzi(const uint8_t chan_id, const uint16_t azimuth_uint, const float distance, float &intensity,
                           float &x_coord, float &y_coord, float &z_coord);

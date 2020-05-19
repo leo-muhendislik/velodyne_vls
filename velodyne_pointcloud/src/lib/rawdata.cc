@@ -160,7 +160,7 @@ namespace velodyne_rawdata {
         } else if (pkt.data[1205] == 33) { // HDL-32E (NOT TESTED YET)
             unpack_hdl32(pkt, pc);
         } else if (pkt.data[1205] == 161 || pkt.data[1205] == 99) { // VLS 128
-            unpack_vls128(pkt, pc, pc_pcl);
+            unpack_vls128(pkt, pc_pcl);
         } else { // HDL-64E without azimuth compensation from the firing order
             unpack_hdl64(pkt, pc);
         }
@@ -597,7 +597,7 @@ namespace velodyne_rawdata {
      *  @param pkt raw packet to unpack
      *  @param pc shared pointer to point cloud (points are appended)
      */
-    void RawData::unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc, Cloud &pc_pcl) {
+    void RawData::unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, Cloud &pc_pcl) {
         float azimuth_diff, azimuth_corrected_f;
         float last_azimuth_diff = 0;
         uint16_t azimuth, azimuth_next, azimuth_corrected;
@@ -707,20 +707,15 @@ namespace velodyne_rawdata {
                         Point point_pcl;
 
                         point.ring = corrections.laser_ring;
-                        point.x = xy_distance * cos_rot_angle;    // velodyne y
                         point_pcl.x = xy_distance * cos_rot_angle;    // velodyne y
-                        point.y = -(xy_distance * sin_rot_angle); // velodyne x
                         point_pcl.y = -(xy_distance * sin_rot_angle); // velodyne x
-                        point.z = distance * sin_vert_angle;      // velodyne z
                         point_pcl.z = distance * sin_vert_angle;      // velodyne z
 
                         // Intensity extraction
-                        point.intensity = current_block.data[k + 2];
                         point_pcl.intensity = current_block.data[k + 2];
 
-                        pc.points.push_back(point);
                         pc_pcl.points.push_back(point_pcl);
-                        ++pc.width;
+                        ++pc_pcl.width;
                     }
                 }
             }
