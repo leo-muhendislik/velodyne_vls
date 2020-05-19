@@ -74,6 +74,7 @@ namespace velodyne_pointcloud
 
     // allocate an output point cloud with same time as raw data
     VPointCloud::Ptr outMsg(new VPointCloud());
+    Cloud::Ptr cloud_pcl(new Cloud());
     outMsg->header.stamp = pcl_conversions::toPCL(scanMsg->header).stamp;
     outMsg->header.frame_id = config_.frame_id;
     outMsg->height = 1;
@@ -91,7 +92,7 @@ namespace velodyne_pointcloud
         pcl_conversions::toPCL(header, inPc_.header);
 
         // unpack the raw data
-        data_->unpack(scanMsg->packets[next], inPc_);
+        data_->unpack(scanMsg->packets[next], inPc_, *cloud_pcl);
 
         // clear transform point cloud for this packet
         tfPc_.points.clear();           // is this needed?
