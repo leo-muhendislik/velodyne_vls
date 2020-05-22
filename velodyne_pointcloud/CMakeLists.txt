@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(velodyne_pointcloud)
 
+set(CMAKE_CXX_FLAGS "-O3 -g -Wall ${CMAKE_CXX_FLAGS}")
+
 set(${PROJECT_NAME}_CATKIN_DEPS
     angles
     nodelet
