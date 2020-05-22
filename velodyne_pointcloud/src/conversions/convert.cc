@@ -17,6 +17,8 @@
 
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/voxel_grid.h>
+#include <chrono>
+#include <thread>
 
 namespace velodyne_pointcloud {
   /** @brief Constructor. */
@@ -72,13 +74,22 @@ namespace velodyne_pointcloud {
       data_->unpack(scanMsg->packets[i], *outMsg);
     }
 
+    using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+    using Clock = std::chrono::steady_clock;
+    TimePoint time_point_start = Clock::now();
 
     //Downsample
     velodyne_rawdata::CloudSimple::Ptr cloud_filtered(new velodyne_rawdata::CloudSimple());
+    cloud_filtered->header = outMsg->header;
     pcl::VoxelGrid<velodyne_rawdata::PointSimple> grid;
     grid.setLeafSize(0.200f, 0.200f, 0.200f);
     grid.setInputCloud(outMsg);
     grid.filter(*cloud_filtered);
+
+    TimePoint time_point_end = Clock::now();
+
+    int milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(time_point_end - time_point_start).count();
+    std::cout << "downsampling milliseconds passed : " << milliseconds << ", before: " << outMsg->points.size() << ", after: " << cloud_filtered->points.size() << std::endl;
 
     //Re convert pointcloud msg
 //    sensor_msgs::PointCloud2 msg_cloud_filtered_ros;
@@ -88,9 +99,9 @@ namespace velodyne_pointcloud {
 //    output_.publish(msg_cloud_filtered_ros);
 
     // publish the accumulated cloud message
-    ROS_DEBUG_STREAM("Publishing " << outMsg->height * outMsg->width
-                                   << " Velodyne points, time: " << outMsg->header.stamp);
-    output_.publish(outMsg);
+    ROS_DEBUG_STREAM("Publishing " << cloud_filtered->height * cloud_filtered->width
+                                   << " Velodyne points, time: " << cloud_filtered->header.stamp);
+    output_.publish(cloud_filtered);
   }
 
 } // namespace velodyne_pointcloud
