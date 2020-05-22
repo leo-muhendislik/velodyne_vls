@@ -39,6 +39,9 @@ namespace velodyne_rawdata {
   typedef velodyne_pointcloud::PointXYZIR VPoint;
   typedef pcl::PointCloud<VPoint> VPointCloud;
 
+  typedef pcl::PointXYZI PointSimple;
+  typedef pcl::PointCloud<PointSimple> CloudSimple;
+
   /**
    * Raw Velodyne packet constants and structures.
    */
@@ -157,7 +160,7 @@ namespace velodyne_rawdata {
      */
     int setupOffline(std::string calibration_file, double max_range_, double min_range_);
 
-    void unpack(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+    void unpack(const velodyne_msgs::VelodynePacket &pkt, CloudSimple &pc);
 
     void setParameters(double min_range, double max_range, double view_direction,
                        double view_width);
@@ -196,7 +199,7 @@ namespace velodyne_rawdata {
 
     void unpack_hdl64(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
 
-    void unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+    void unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, CloudSimple &pc);
 
     void compute_xyzi(const uint8_t chan_id, const uint16_t azimuth_uint, const float distance, float &intensity,
                       float &x_coord, float &y_coord, float &z_coord);

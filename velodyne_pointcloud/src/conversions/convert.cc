@@ -16,6 +16,7 @@
 #include "convert.h"
 
 #include <pcl_conversions/pcl_conversions.h>
+#include <pcl/filters/voxel_grid.h>
 
 namespace velodyne_pointcloud {
   /** @brief Constructor. */
@@ -55,8 +56,8 @@ namespace velodyne_pointcloud {
       return;                                     // avoid much work
 
     // allocate a point cloud with same time and frame ID as raw data
-    velodyne_rawdata::VPointCloud::Ptr
-      outMsg(new velodyne_rawdata::VPointCloud());
+    velodyne_rawdata::CloudSimple::Ptr
+      outMsg(new velodyne_rawdata::CloudSimple());
     //   velodyne_rawdata::XYZIRBPointCloud::Ptr
     //   outMsg(new velodyne_rawdata::XYZIRBPointCloud());
     // outMsg's header is a pcl::PCLHeader, convert it before stamp assignment
@@ -70,6 +71,21 @@ namespace velodyne_pointcloud {
     for (size_t i = 0; i < scanMsg->packets.size(); ++i) {
       data_->unpack(scanMsg->packets[i], *outMsg);
     }
+
+
+    //Downsample
+    velodyne_rawdata::CloudSimple::Ptr cloud_filtered(new velodyne_rawdata::CloudSimple());
+    pcl::VoxelGrid<velodyne_rawdata::PointSimple> grid;
+    grid.setLeafSize(0.200f, 0.200f, 0.200f);
+    grid.setInputCloud(outMsg);
+    grid.filter(*cloud_filtered);
+
+    //Re convert pointcloud msg
+//    sensor_msgs::PointCloud2 msg_cloud_filtered_ros;
+//    pcl::toROSMsg(*cloud_filtered, msg_cloud_filtered_ros);
+//    msg_cloud_filtered_ros.header = scanMsg->header;
+
+//    output_.publish(msg_cloud_filtered_ros);
 
     // publish the accumulated cloud message
     ROS_DEBUG_STREAM("Publishing " << outMsg->height * outMsg->width

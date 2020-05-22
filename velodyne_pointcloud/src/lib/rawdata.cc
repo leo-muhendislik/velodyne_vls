@@ -150,19 +150,10 @@ namespace velodyne_rawdata {
    *  @param pc shared pointer to point cloud (points are appended)
    */
   void RawData::unpack(const velodyne_msgs::VelodynePacket &pkt,
-                       VPointCloud &pc) {
+                       CloudSimple &pc) {
     ROS_DEBUG_STREAM("Received packet, time: " << pkt.stamp);
-    // std::cerr << "Sensor ID = " << (unsigned int)(pkt.data[1205]) << std::endl;
-    if (pkt.data[1205] == 34 || pkt.data[1205] == 36) { // VLP-16 or hi-res
-      unpack_vlp16(pkt, pc);
-    } else if (pkt.data[1205] == 40) { // VLP-32C
-      unpack_vlp32(pkt, pc);
-    } else if (pkt.data[1205] == 33) { // HDL-32E (NOT TESTED YET)
-      unpack_hdl32(pkt, pc);
-    } else if (pkt.data[1205] == 161 || pkt.data[1205] == 99) { // VLS 128
+    if (pkt.data[1205] == 161 || pkt.data[1205] == 99) { // VLS 128
       unpack_vls128(pkt, pc);
-    } else { // HDL-64E without azimuth compensation from the firing order
-      unpack_hdl64(pkt, pc);
     }
   }
 
@@ -591,7 +582,7 @@ namespace velodyne_rawdata {
    *  @param pkt raw packet to unpack
    *  @param pc shared pointer to point cloud (points are appended)
    */
-  void RawData::unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc) {
+  void RawData::unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, CloudSimple &pc) {
     float azimuth_diff, azimuth_corrected_f;
     float last_azimuth_diff = 0;
     uint16_t azimuth, azimuth_next, azimuth_corrected;
@@ -696,8 +687,8 @@ namespace velodyne_rawdata {
 
             /** Use standard ROS coordinate system (right-hand rule) */
             // append this point to the cloud
-            VPoint point;
-            point.ring = corrections.laser_ring;
+            PointSimple point;
+//            point.ring = corrections.laser_ring;
             point.x = xy_distance * cos_rot_angle;    // velodyne y
             point.y = -(xy_distance * sin_rot_angle); // velodyne x
             point.z = distance * sin_vert_angle;      // velodyne z

@@ -69,7 +69,7 @@ namespace velodyne_pointcloud {
       return;                                     // avoid much work
 
     // allocate an output point cloud with same time as raw data
-    VPointCloud::Ptr outMsg(new VPointCloud());
+    CloudSimple::Ptr outMsg(new CloudSimple());
     outMsg->header.stamp = pcl_conversions::toPCL(scanMsg->header).stamp;
     outMsg->header.frame_id = config_.frame_id;
     outMsg->height = 1;
@@ -100,7 +100,7 @@ namespace velodyne_pointcloud {
       try {
         ROS_DEBUG_STREAM("transforming from " << inPc_.header.frame_id
                                               << " to " << config_.frame_id);
-        VPointCloud inPc_V;
+        CloudSimple inPc_V;
         pcl::copyPointCloud(inPc_, inPc_V);
         //pcl_ros::transformPointCloud(config_.frame_id, inPc_, tfPc_,
         pcl_ros::transformPointCloud(config_.frame_id, inPc_V, tfPc_,

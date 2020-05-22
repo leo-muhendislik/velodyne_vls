@@ -36,6 +36,9 @@
 typedef velodyne_rawdata::VPoint VPoint;
 typedef velodyne_rawdata::VPointCloud VPointCloud;
 
+typedef pcl::PointXYZI PointSimple;
+typedef pcl::PointCloud<PointSimple> CloudSimple;
+
 // instantiate template for transforming a VPointCloud
 template bool
 pcl_ros::transformPointCloud<VPoint>(const std::string &,
@@ -78,9 +81,9 @@ namespace velodyne_pointcloud {
     // Point cloud buffers for collecting points within a packet.  The
     // inPc_ and tfPc_ are class members only to avoid reallocation on
     // every message.
-    VPointCloud inPc_;              ///< input packet point cloud
+    CloudSimple inPc_;              ///< input packet point cloud
 //    velodyne_rawdata::XYZIRBPointCloud inPc_;
-    VPointCloud tfPc_;              ///< transformed packet point cloud
+    CloudSimple tfPc_;              ///< transformed packet point cloud
   };
 
 } // namespace velodyne_pointcloud
