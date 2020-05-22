@@ -18,24 +18,23 @@
 
 #include "convert.h"
 
-namespace velodyne_pointcloud
-{
-  class CloudNodelet: public nodelet::Nodelet
-  {
+namespace velodyne_pointcloud {
+  class CloudNodelet : public nodelet::Nodelet {
   public:
 
     CloudNodelet() {}
+
     ~CloudNodelet() {}
 
   private:
 
     virtual void onInit();
+
     boost::shared_ptr<Convert> conv_;
   };
 
   /** @brief Nodelet initialization. */
-  void CloudNodelet::onInit()
-  {
+  void CloudNodelet::onInit() {
     conv_.reset(new Convert(getNodeHandle(), getPrivateNodeHandle()));
   }
 

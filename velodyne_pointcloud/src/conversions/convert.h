@@ -25,25 +25,25 @@
 #include <dynamic_reconfigure/server.h>
 #include <velodyne_pointcloud/CloudNodeConfig.h>
 
-namespace velodyne_pointcloud
-{
-  class Convert
-  {
+namespace velodyne_pointcloud {
+  class Convert {
   public:
 
     Convert(ros::NodeHandle node, ros::NodeHandle private_nh);
+
     ~Convert() {}
 
   private:
-    
+
     void callback(velodyne_pointcloud::CloudNodeConfig &config,
-                uint32_t level);
+                  uint32_t level);
+
     void processScan(const velodyne_msgs::VelodyneScan::ConstPtr &scanMsg);
 
     ///Pointer to dynamic reconfigure service srv_
     boost::shared_ptr<dynamic_reconfigure::Server<velodyne_pointcloud::
-      CloudNodeConfig> > srv_;
-    
+    CloudNodeConfig> > srv_;
+
     boost::shared_ptr<velodyne_rawdata::RawData> data_;
     ros::Subscriber velodyne_scan_;
     ros::Publisher output_;

@@ -19,24 +19,23 @@
 
 #include "colors.h"
 
-namespace velodyne_pointcloud
-{
-  class RingColorsNodelet: public nodelet::Nodelet
-  {
+namespace velodyne_pointcloud {
+  class RingColorsNodelet : public nodelet::Nodelet {
   public:
 
     RingColorsNodelet() {}
+
     ~RingColorsNodelet() {}
 
   private:
 
     virtual void onInit();
+
     boost::shared_ptr<RingColors> colors_;
   };
 
   /** @brief Nodelet initialization. */
-  void RingColorsNodelet::onInit()
-  {
+  void RingColorsNodelet::onInit() {
     colors_.reset(new RingColors(getNodeHandle(), getPrivateNodeHandle()));
   }
 

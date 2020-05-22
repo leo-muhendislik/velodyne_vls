@@ -38,18 +38,17 @@ typedef velodyne_rawdata::VPointCloud VPointCloud;
 
 // instantiate template for transforming a VPointCloud
 template bool
-  pcl_ros::transformPointCloud<VPoint>(const std::string &,
-                                       const VPointCloud &,
-                                       VPointCloud &,
-                                       const tf::TransformListener &);
+pcl_ros::transformPointCloud<VPoint>(const std::string &,
+                                     const VPointCloud &,
+                                     VPointCloud &,
+                                     const tf::TransformListener &);
 
-namespace velodyne_pointcloud
-{
-  class Transform
-  {
+namespace velodyne_pointcloud {
+  class Transform {
   public:
 
     Transform(ros::NodeHandle node, ros::NodeHandle private_nh);
+
     ~Transform() {}
 
   private:
@@ -58,10 +57,11 @@ namespace velodyne_pointcloud
 
     ///Pointer to dynamic reconfigure service srv_
     boost::shared_ptr<dynamic_reconfigure::Server<velodyne_pointcloud::
-      TransformNodeConfig> > srv_;
+    TransformNodeConfig> > srv_;
+
     void reconfigure_callback(velodyne_pointcloud::TransformNodeConfig &config,
-                  uint32_t level);
-    
+                              uint32_t level);
+
     const std::string tf_prefix_;
     boost::shared_ptr<velodyne_rawdata::RawData> data_;
     message_filters::Subscriber<velodyne_msgs::VelodyneScan> velodyne_scan_;

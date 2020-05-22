@@ -23,17 +23,16 @@
 #include <pcl/point_types.h>
 #include <velodyne_pointcloud/point_types.h>
 
-namespace velodyne_pointcloud
-{
+namespace velodyne_pointcloud {
   // shorter names for point cloud types in this namespace
   typedef velodyne_pointcloud::PointXYZIR VPoint;
   typedef pcl::PointCloud<VPoint> VPointCloud;
 
-  class RingColors
-  {
+  class RingColors {
   public:
 
     RingColors(ros::NodeHandle node, ros::NodeHandle private_nh);
+
     ~RingColors() {}
 
   private:
