@@ -34,8 +34,7 @@
 #include <velodyne_pointcloud/point_types.h>
 #include <velodyne_pointcloud/calibration.h>
 
-namespace velodyne_rawdata
-{
+namespace velodyne_rawdata {
   // Shorthand typedefs for point cloud representations
   typedef velodyne_pointcloud::PointXYZIR VPoint;
   typedef pcl::PointCloud<VPoint> VPointCloud;
@@ -47,26 +46,26 @@ namespace velodyne_rawdata
   static const int CHANNEL_SIZE = 3; // [bytes]
   static const int NUM_CHANS_PER_BLOCK = 32;
   static const int BLOCK_DATA_SIZE = (NUM_CHANS_PER_BLOCK * CHANNEL_SIZE); // 32 * 3 = 96 bytes
-  static const float  CHANNEL_TDURATION  =   2.304f;   // [µs] Channels corresponds to one laser firing
-  static const float  SEQ_TDURATION      =  55.296f;   // [µs] Sequence is a set of laser firings including recharging
+  static const float CHANNEL_TDURATION = 2.304f;   // [µs] Channels corresponds to one laser firing
+  static const float SEQ_TDURATION = 55.296f;   // [µs] Sequence is a set of laser firings including recharging
 
-  static const float    ROTATION_RESOLUTION   =     0.01f;  // [deg]
-  static const uint16_t ROTATION_MAX_UNITS    =    36000u;  // [deg/100]
-  static const float    DISTANCE_RESOLUTION   =    0.002f;  // [m]
-  static const float    VLP32_DISTANCE_RESOLUTION   =    0.004f;  // [m]
+  static const float ROTATION_RESOLUTION = 0.01f;  // [deg]
+  static const uint16_t ROTATION_MAX_UNITS = 36000u;  // [deg/100]
+  static const float DISTANCE_RESOLUTION = 0.002f;  // [m]
+  static const float VLP32_DISTANCE_RESOLUTION = 0.004f;  // [m]
 
   /** @todo make this work for both big and little-endian machines */
   static const uint16_t UPPER_BANK = 0xeeff;
   static const uint16_t LOWER_BANK = 0xddff;
 
   /** Special Definitions for VLP16 support **/
-  static const int    VLP16_NUM_SEQS_PER_BLOCK  = 2;
-  static const int    VLP16_NUM_CHANS_PER_SEQ   = 16;
-  static const float  VLP16_BLOCK_TDURATION     = (VLP16_NUM_SEQS_PER_BLOCK * SEQ_TDURATION);
+  static const int VLP16_NUM_SEQS_PER_BLOCK = 2;
+  static const int VLP16_NUM_CHANS_PER_SEQ = 16;
+  static const float VLP16_BLOCK_TDURATION = (VLP16_NUM_SEQS_PER_BLOCK * SEQ_TDURATION);
 
   /** Special Definitions for HDL32 support **/
-  static const float  HDL32_CHANNEL_TDURATION  =   1.152f;   // [µs] From Application Note: HDL-32E Packet Structure and Timing Defition
-  static const float  HDL32_SEQ_TDURATION      =  46.080f;   // [µs] Sequence is a set of laser firings including recharging
+  static const float HDL32_CHANNEL_TDURATION = 1.152f;   // [µs] From Application Note: HDL-32E Packet Structure and Timing Defition
+  static const float HDL32_SEQ_TDURATION = 46.080f;   // [µs] Sequence is a set of laser firings including recharging
 
   /** Special Definitions for VLS128 support **/
   // These are used to detect which bank of 32 lasers is in this block
@@ -75,8 +74,8 @@ namespace velodyne_rawdata
   static const uint16_t VLS128_BANK_3 = 0xccff;
   static const uint16_t VLS128_BANK_4 = 0xbbff;
 
-  static const float  VLS128_CHANNEL_TDURATION  =  2.665f;  // [µs] Channels corresponds to one laser firing
-  static const float  VLS128_SEQ_TDURATION      =  53.3f;   // [µs] Sequence is a set of laser firings including recharging
+  static const float VLS128_CHANNEL_TDURATION = 2.665f;  // [µs] Channels corresponds to one laser firing
+  static const float VLS128_SEQ_TDURATION = 53.3f;   // [µs] Sequence is a set of laser firings including recharging
 
   /** \brief Raw Velodyne data block.
    *
@@ -85,11 +84,10 @@ namespace velodyne_rawdata
    *
    *  use stdint.h types, so things work with both 64 and 32-bit machines
    */
-  typedef struct raw_block
-  {
+  typedef struct raw_block {
     uint16_t header;        ///< UPPER_BANK or LOWER_BANK
     uint16_t rotation;      ///< 0-35999, divide by 100 to get degrees
-    uint8_t  data[BLOCK_DATA_SIZE];
+    uint8_t data[BLOCK_DATA_SIZE];
   } raw_block_t;
 
   /** used for unpacking the first two data bytes in a block
@@ -97,10 +95,9 @@ namespace velodyne_rawdata
    *  They are packed into the actual data stream misaligned.  I doubt
    *  this works on big endian machines.
    */
-  union two_bytes
-  {
+  union two_bytes {
     uint16_t uint;
-    uint8_t  bytes[2];
+    uint8_t bytes[2];
   };
 
   static const int PACKET_SIZE = 1206; // [bytes]
@@ -120,19 +117,18 @@ namespace velodyne_rawdata
    *
    *  status has either a temperature encoding or the microcode level
    */
-  typedef struct raw_packet
-  {
+  typedef struct raw_packet {
     raw_block_t blocks[NUM_BLOCKS_PER_PACKET];
     uint16_t revolution;
     uint8_t status[PACKET_STATUS_SIZE];
   } raw_packet_t;
 
   /** \brief Velodyne data conversion class */
-  class RawData
-  {
+  class RawData {
   public:
 
     RawData();
+
     ~RawData() {}
 
     /** \brief Set up for data processing.
@@ -193,16 +189,20 @@ namespace velodyne_rawdata
 
     /** add private function to handle each sensor **/
     void unpack_vlp16(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+
     void unpack_vlp32(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+
     void unpack_hdl32(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+
     void unpack_hdl64(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+
     void unpack_vls128(const velodyne_msgs::VelodynePacket &pkt, VPointCloud &pc);
+
     void compute_xyzi(const uint8_t chan_id, const uint16_t azimuth_uint, const float distance, float &intensity,
-      float &x_coord, float &y_coord, float &z_coord);
+                      float &x_coord, float &y_coord, float &z_coord);
 
     /** in-line test whether a point is in range */
-    bool pointInRange(float range)
-    {
+    bool pointInRange(float range) {
       return (range >= config_.min_range
               && range <= config_.max_range);
     }
